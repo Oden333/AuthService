@@ -1,0 +1,19 @@
+
+http:
+  host: "localhost"
+  port: 8080
+
+#Got from https://jwtsecret.com/generate
+jwt:
+  signingKey: "40d084e7e4df17c35aaf91c5d1b5a6384dc1d28b2f8a6d50161b7d37a25bc31a"
+
+auth:
+  accessTokenTTL: 10m
+  refreshTokenTTL: 720h 
+
+mongo:
+  uri: mongodb://%s:%s@localhost:27019/
+  user: root
+  pswd: qwerty
+  databaseName: authService
+  port: 27019
