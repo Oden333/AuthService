@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"errors"
 	"time"
 
 	"github.com/spf13/viper"
@@ -38,53 +39,54 @@ type (
 )
 
 func InitConfig() (*Config, error) {
-
-	return &Config{
-		HTTP: HTTPConfig{
-			Host: "localhost",
-			Port: "8080",
-		},
-		Mongo: MongoConfig{
-			URI:      "mongodb://%s:%s@localhost:27019/",
-			User:     "root",
-			Password: "qwerty",
-			Name:     "authService",
-		},
-		Auth: AuthConfig{
-			JWT: JWTConfig{
-				AccessTokenTTL:  time.Minute * 1000,
-				RefreshTokenTTL: time.Hour * 720,
-				SigningKey:      "40d084e7e4df17c35aaf91c5d1b5a6384dc1d28b2f8a6d50161b7d37a25bc31a",
-			},
-		},
-	}, nil
+	var cfg Config
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		return nil, errors.New("unable to read config")
+	}
+	if err = cfg.getCfg(); err != nil {
+		return nil, errors.New("unable to get config data")
+	}
+	return &cfg, nil
 	/*
-			jwt:
-		  signingKey: "40d084e7e4df17c35aaf91c5d1b5a6384dc1d28b2f8a6d50161b7d37a25bc31a"
+		return &Config{
+			HTTP: HTTPConfig{
+				Host: "localhost",
+				Port: "8080",
+			},
+			Mongo: MongoConfig{
+				URI:      "mongodb://%s:%s@localhost:27019/",
+				User:     "root",
+				Password: "qwerty",
+				Name:     "authService",
+			},
+			Auth: AuthConfig{
+				JWT: JWTConfig{
+					AccessTokenTTL:  time.Minute * 1000,
+					RefreshTokenTTL: time.Hour * 720,
+					SigningKey:      "40d084e7e4df17c35aaf91c5d1b5a6384dc1d28b2f8a6d50161b7d37a25bc31a",
+				},
+			},
+		}, nil
 
-		auth:
-		  accessTokenTTL: 10m
-		  refreshTokenTTL: 720h
+				jwt:
+			  signingKey: "40d084e7e4df17c35aaf91c5d1b5a6384dc1d28b2f8a6d50161b7d37a25bc31a"
 
-		mongo:
-		  uri: mongodb://%s:%s@localhost:27019/
-		  user: root
-		  pswd: qwerty
-		  databaseName: authService
-		  port: 27019
+			auth:
+			  accessTokenTTL: 10m
+			  refreshTokenTTL: 720h
 
-			var cfg Config
-			return
-			viper.AddConfigPath("configs")
-			viper.SetConfigName("config")
-			err := viper.ReadInConfig()
-			if err != nil {
-				return nil, errors.New("unable to read config")
-			}
-			if err = cfg.getCfg(); err != nil {
-				return nil, errors.New("unable to get config data")
-			}
-			return &cfg, nil */
+			mongo:
+			  uri: mongodb://%s:%s@localhost:27019/
+			  user: root
+			  pswd: qwerty
+			  databaseName: authService
+			  port: 27019
+
+
+	*/
 }
 
 func (cfg *Config) getCfg() error {
