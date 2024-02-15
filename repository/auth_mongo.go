@@ -43,7 +43,22 @@ func (r *AuthMongo) GetUser(ctx context.Context, email, password string) (models
 
 	return user, nil
 }
+func (r *AuthMongo) GetUserByGUID(ctx context.Context, guid string) (models.User, error) {
+	var user models.User
+	objectId, err := primitive.ObjectIDFromHex(guid)
+	if err != nil {
+		logrus.Info("Invalid id")
+	}
+	if err := r.db.FindOne(ctx, bson.M{"_id": objectId}).Decode(&user); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return models.User{}, ErrUserNotFound
+		}
 
+		return models.User{}, err
+	}
+
+	return user, nil
+}
 func (r *AuthMongo) SetSession(ctx context.Context, userId primitive.ObjectID, session models.Session) error {
 	_, err := r.db.UpdateOne(ctx, bson.M{"_id": userId}, bson.M{"$set": bson.M{"session": session}})
 

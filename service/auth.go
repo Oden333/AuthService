@@ -60,6 +60,19 @@ func (s *AuthService) GetUser(ctx context.Context, input models.SignInInput) (To
 
 	return s.createSession(ctx, user.Id)
 }
+
+func (s *AuthService) GetUserByGUID(ctx context.Context, guid string) (Tokens, error) {
+
+	user, err := s.repo.GetUserByGUID(ctx, guid)
+	if err != nil {
+		if errors.Is(err, ErrUserNotFound) {
+			return Tokens{}, err
+		}
+		return Tokens{}, err
+	}
+
+	return s.createSession(ctx, user.Id)
+}
 func (s *AuthService) RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error) {
 	refreshTokenHash := base64.StdEncoding.EncodeToString([]byte(refreshToken))
 

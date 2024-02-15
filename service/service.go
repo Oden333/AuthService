@@ -12,6 +12,7 @@ import (
 type Authorization interface {
 	CreateUser(ctx context.Context, user models.SignUpInput) error
 	GetUser(ctx context.Context, input models.SignInInput) (Tokens, error)
+	GetUserByGUID(ctx context.Context, guid string) (Tokens, error)
 	RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error)
 	ParseToken(accessToken string) (string, error)
 }

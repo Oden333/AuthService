@@ -11,6 +11,7 @@ import (
 type Authorization interface {
 	CreateUser(ctx context.Context, user models.User) error
 	GetUser(ctx context.Context, email, password string) (models.User, error)
+	GetUserByGUID(ctx context.Context, guid string) (models.User, error)
 	SetSession(ctx context.Context, userId primitive.ObjectID, session models.Session) error
 	GetByRefreshToken(ctx context.Context, refreshToken string) (models.User, error)
 }

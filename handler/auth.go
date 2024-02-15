@@ -48,6 +48,30 @@ func (h *Handler) singIn(c *gin.Context) {
 	})
 }
 
+func (h *Handler) singInByGiud(c *gin.Context) {
+
+	type specializedSignInInput struct {
+		Guid string `json:"guid" binding:"required"`
+	}
+	var input specializedSignInInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "Invalid input body")
+		return
+	}
+
+	res, err := h.services.Authorization.GetUserByGUID(c.Request.Context(), input.Guid)
+
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, tokenResponse{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})
+}
+
 func (h *Handler) userRefresh(c *gin.Context) {
 	type refreshInput struct {
 		Token string `json:"token" binding:"required"`

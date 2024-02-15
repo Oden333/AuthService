@@ -22,8 +22,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	//Группа маршрутов авторизации
 	auth := router.Group("/auth")
 	{
+		//Маршрут добавляет пользвателя в БД
 		auth.POST("/sign-up", h.singUp)
+		//Маршрут выдает пару Access, Refresh токенов для пользователя с данными email,password
 		auth.POST("/sign-in", h.singIn)
+		//Маршрут выдает пару Access, Refresh токенов для пользователя сидентификатором (GUID) указанным в параметре запроса
+		auth.POST("/sign-in_GUID", h.singInByGiud)
+		//Маршрут выполняет Refresh операцию на пару Access, Refreshтокенов
 		auth.POST("/auth/refresh", h.userRefresh)
 	}
 	//Группа маршрутов для авторизированных пользвателей (запросы с токеном)
